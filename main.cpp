@@ -13,10 +13,11 @@ const string SUITVALUES[] = {"Hearts", "Clubs", "Diamonds", "Spades"};
 const string RANKVALUES[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
 class Card {
-public:
+private:
     string rank;
     Suit suit;
 
+public:
     Card() : suit(Hearts), rank("2") {}
 
     Card(Suit suit, string rank): suit(suit), rank(rank) { }
@@ -42,6 +43,7 @@ class Deck {
 private:
     std::array<Card, 52> cards;
     int index;
+
 public:
     Deck() {
         int count = 0;
@@ -58,17 +60,59 @@ public:
         this->index = 0;
     }
 
-    const Card& operator[](int i) const{
+    Card& operator[](int i) {
         return this->cards[i];
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Deck& myDeck){
+    friend std::ostream& operator<<(std::ostream& os, Deck& myDeck){
         for (int i=0; i < 52; i++){
             os << myDeck[i] << endl;
         }
         return os;
     }
 
+};
+
+class Hand{
+private:
+    std::vector<Card> cards;
+    int aces;
+
+public:
+    Hand(){
+        this->aces = 0;
+    }
+
+    int addCard(Card& newCard){
+        cards.push_back(newCard);
+        if (newCard.getRankValue() == 11){
+            this->aces++;
+        }
+        return getTotal();
+    }
+
+    int getTotal(){
+        int total = 0;
+        for (Card c: this->cards){
+            total += c.getRankValue();
+        }
+        if (total > 21 && this->aces > 0) {
+            total -= 10;
+            this->aces -=1;
+        }
+        return total;
+    }
+
+};
+
+class Player{
+private:
+    Hand hand;
+
+public:
+    Player(){
+        hand = Hand();
+    };
 };
 
 
